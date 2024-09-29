@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableNativeFeedback, View, Platform, TouchableOpacity } from 'react-native'
 
 interface Props{
     title: String;
@@ -9,19 +9,53 @@ interface Props{
 }
 
 export const Fab = ({ title, onPress, position = 'br' }: Props) => {
-    
-  return (
-    <TouchableOpacity style = {[
+
+    const ios = () => {
+        return(
+            <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={ 0.8 }
+        style = {[
         styles.fabLocation,
         ( position === 'bl' ) ? styles.left : styles.right
-    ]} 
-    onPress={ onPress }
+        ]}
+        >        
+        <View style={styles.fab}>
+            <Text style={styles.fabText}> { title } </Text>
+        </View>
+        
+
+    </TouchableOpacity>
+
+        )
+    }
+
+    const android = ()=>{
+        return(
+
+        <View
+        style = {[
+        styles.fabLocation,
+        ( position === 'bl' ) ? styles.left : styles.right
+        ]}
     >
-    <View style={styles.fab}>
-        <Text style={styles.fabText}> { title } </Text>
+        <TouchableNativeFeedback 
+         
+        onPress={ onPress }
+        background={ TouchableNativeFeedback.Ripple('#28425B',false, 30) }
+        >
+            <View style={styles.fab}>
+                <Text style={styles.fabText}> { title } </Text>
+            </View>
+        </TouchableNativeFeedback>
+
     </View>
-</TouchableOpacity>
-  )
+
+        )
+
+    }
+
+  return (Platform.OS === 'ios') ? ios() : android();
 }
 
 const styles = StyleSheet.create({
@@ -45,7 +79,16 @@ const styles = StyleSheet.create({
         width:60,
         height:60,
         borderRadius:100,
-        justifyContent:'center'
+        justifyContent:'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.30,
+        shadowRadius: 4.65,
+
+        elevation: 8,
 
     },
     fabText:{
